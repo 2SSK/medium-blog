@@ -1,4 +1,3 @@
-// 13.3 = 1:22:38
 import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
@@ -23,13 +22,13 @@ blogRouter.use(async (c, next) => {
   }
 
   const token = jwt.split(" ")[1];
-  const payload = await verify(token, c.env.JWT_SECRET);
+  const payload = (await verify(token, c.env.JWT_SECRET)) as { userId: string };
   if (!payload) {
     c.status(401);
     return c.json({ error: "Unauthorized" });
   }
 
-  c.set("userId", payload.userId);
+  c.set("userId", payload.userId as string);
   await next();
 });
 
